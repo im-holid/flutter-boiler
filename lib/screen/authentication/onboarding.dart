@@ -14,6 +14,8 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
+  bool loading = true;
+  bool disabled = true;
   final List<Carousel> _banners = [
     Carousel(
         image: 'assets/image_banner1.png',
@@ -33,14 +35,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   void initState() {
     super.initState();
-    // TODO: Implement logic to check if user is already logged in
+    getAuthToken();
   }
 
-  void test() {
-    postReqAuthToken(context: context).catchError((onError) {
-      print('object');
-      print(onError.toString());
+  Future<bool> getAuthToken() async {
+    bool isDisabled = await postReqAuthToken();
+    setState(() {
+      loading = false;
+      disabled = isDisabled;
     });
+    return isDisabled;
   }
 
   Widget _buildContent() {
@@ -112,12 +116,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
           right: 0,
           child: Center(
             child: AntiButton(
-              loading: false,
+              loading: loading,
               text: 'Get Started'.toUpperCase(),
               textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(color: hiroSwatch),
-              onPressed: () => {
-                test()
-                // Navigator.pushNamed(context, '/login')
+              onPressed: () {
+                if (!disabled) {
+                  Navigator.pushNamed(context, '/login');
+                  return;
+                }
+                setState(() {
+                  loading = true;
+                });
+                getAuthToken().then((value) {
+                  if (value == false) Navigator.pushNamed(context, '/login');
+                });
               },
               backgroundColor: Colors.white,
             ),

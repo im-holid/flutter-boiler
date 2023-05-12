@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Store {
@@ -7,10 +9,11 @@ class Store {
     return;
   }
 
-  static Future<String> read(Enum keyEnum) async {
+  static Future<dynamic> read(Enum keyEnum) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? data = prefs.getString(keyEnum.name);
-    return data ?? '';
+    String? data = prefs.getString(keyEnum.name) ?? '';
+    if (data == '') return '';
+    return jsonDecode(data);
   }
 
   static Future<void> remove(Enum keyEnum) async {

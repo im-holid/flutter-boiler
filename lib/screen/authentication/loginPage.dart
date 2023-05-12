@@ -6,9 +6,13 @@ import 'package:flag/flag.dart';
 
 // import 'package:hiro_app/controllers/index.dart';
 import 'package:hiro_app/helper/index.dart';
+import 'package:hiro_app/model/check_number.dart';
 import 'package:hiro_app/model/index.dart';
+import 'package:hiro_app/screen/index.dart';
+import 'package:hiro_app/services/post/check_phone.dart';
 // import 'package:hiro_app/screen/index.dart';
 import 'package:hiro_app/theme/index.dart';
+import 'package:hiro_app/widget/index.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,21 +22,52 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  double? _targetWidth;
   final Map<String, dynamic> _formData = {'phoneNumber': null};
   final _formKey = GlobalKey<FormState>();
   final CountryCode _country = CountryCode(name: 'Indonesia', dialCode: '62', code: 'ID');
 
+  double? _targetWidth;
+  bool isLoading = false;
+
   // final checkPhoneNumberCont = Get.put(CheckPhoneNumberCont());
 
-  void onSubmit() {
+  void onSubmit() async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
-    Map<String, dynamic> body = {
-      'phoneNumber': _formData['phoneNumber'],
-      'phoneCode': _country.dialCode
-    };
-    // checkPhoneNumberCont.postCheckPhoneNumber(context, body: body);
+    setState(() {
+      isLoading = true;
+    });
+
+    postCheckPhone(
+      context: context,
+      phoneNumber: _formData['phoneNumber'],
+      phoneCode: _country.dialCode ?? '',
+    ).then((value) {
+      if (value != null) {
+        CheckNumber checkNumber = value;
+        if (checkNumber.status == EnumNumberStatus.registered.value) {
+          Navigator.pushNamed(
+            context,
+            '/loginpin',
+            arguments: InputPinArgumets(
+              phone: _formData['phoneNumber'],
+              phoneCode: _country.dialCode ?? '',
+            ),
+          );
+          // Navigator.pushNamed(context, '/home');
+        }
+        // if (checkNumber.status == EnumNumberStatus.registiredNoPin.value) {
+        //   Navigator.pushNamed(context, '/home');
+        // }
+        // if (value == EnumNumberStatus.nonRegistered.value) {
+        //   Navigator.pushNamed(context, '/home');
+        // }
+      }
+    }).whenComplete(() {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   Widget _buildTncPp() {
@@ -94,11 +129,12 @@ class _LoginPageState extends State<LoginPage> {
           const SizedBox(
             height: 12,
           ),
-          // Obx(() => AntiButton(
-          //       loading: checkPhoneNumberCont.loading.value,
-          //       onPressed: onSubmit,
-          //       text: 'Continue'.toUpperCase(),
-          //     )),
+          AntiButton(
+            loadingColor: Colors.white,
+            loading: isLoading,
+            onPressed: onSubmit,
+            text: 'Continue'.toUpperCase(),
+          )
         ],
       ),
     );

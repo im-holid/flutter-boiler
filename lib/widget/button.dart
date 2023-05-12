@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hiro_app/helper/constant.dart';
 import 'package:hiro_app/theme/index.dart';
 import 'package:hiro_app/widget/loading.dart';
 
@@ -9,26 +10,30 @@ class AntiButton extends StatelessWidget {
   final double? buttonHeight;
   final void Function() onPressed;
   final Color? backgroundColor;
+  final Color? loadingColor;
   final TextStyle? textStyle;
   final bool? loading;
-  const AntiButton(
-      {Key? key,
-      required this.text,
-      required this.onPressed,
-      this.type,
-      this.buttonWidth,
-      this.buttonHeight,
-      this.backgroundColor,
-      this.textStyle,
-      this.loading})
-      : super(key: key);
+  const AntiButton({
+    Key? key,
+    required this.text,
+    required this.onPressed,
+    this.type,
+    this.buttonWidth,
+    this.buttonHeight,
+    this.backgroundColor,
+    this.textStyle,
+    this.loading,
+    this.loadingColor,
+  }) : super(key: key);
 
   Widget _buildSolidButton(BuildContext context) {
     return ElevatedButton(
       onPressed: loading == true ? () {} : onPressed,
       style: ElevatedButton.styleFrom(backgroundColor: backgroundColor ?? hiroSwatch),
       child: loading == true
-          ? const AntiLoading()
+          ? AntiLoading(
+              color: loadingColor ?? hiroSwatch,
+            )
           : Text(
               text.toUpperCase(),
               textAlign: TextAlign.center,
@@ -42,7 +47,9 @@ class AntiButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: loading == true ? () {} : onPressed,
       child: loading == true
-          ? const AntiLoading()
+          ? AntiLoading(
+              color: loadingColor ?? hiroSwatch,
+            )
           : Text(
               textAlign: TextAlign.center,
               text.toUpperCase(),

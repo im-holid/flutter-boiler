@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hiro_app/model/index.dart';
+import 'package:hiro_app/riverpod/auth_token.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
 
   @override
-  State<Home> createState() {
-    return _HomeState();
-  }
+  State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  Map data = {};
+  // Map data = {};
 
   @override
   Widget build(BuildContext context) {
-    data = data.isNotEmpty ? data : ModalRoute.of(context)?.settings.arguments as Map;
-
     // set background image
     Color bgColor = Colors.indigo;
 
@@ -29,19 +28,7 @@ class _HomeState extends State<Home> {
             child: Column(
               children: <Widget>[
                 TextButton.icon(
-                  onPressed: () async {
-                    dynamic result = await Navigator.pushNamed(context, '/location');
-                    if (result != null) {
-                      setState(() {
-                        data = {
-                          'time': result['time'],
-                          'location': result['location'],
-                          'isDaytime': result['isDaytime'],
-                          'flag': result['flag']
-                        };
-                      });
-                    }
-                  },
+                  onPressed: () async {},
                   icon: Icon(
                     Icons.edit_location,
                     color: Colors.grey[300],
@@ -56,23 +43,37 @@ class _HomeState extends State<Home> {
                 const SizedBox(height: 20.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      data['location'],
-                      style: const TextStyle(
-                        fontSize: 12.0,
-                        letterSpacing: 2.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
+                  children: const <Widget>[SectionUser()],
                 ),
                 const SizedBox(height: 20.0),
-                Text(data['time'], style: const TextStyle(fontSize: 20.0, color: Colors.white)),
+                const Text('dfjksbnhjbdsjhds',
+                    style: TextStyle(fontSize: 20.0, color: Colors.white)),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class SectionUser extends ConsumerStatefulWidget {
+  const SectionUser({super.key});
+
+  @override
+  ConsumerState<SectionUser> createState() => _SectionUserState();
+}
+
+class _SectionUserState extends ConsumerState<SectionUser> {
+  @override
+  Widget build(BuildContext context) {
+    final MemberDetail user = ref.watch(memberProvider);
+    return Text(
+      user.fullname ?? '',
+      style: const TextStyle(
+        fontSize: 12.0,
+        letterSpacing: 2.0,
+        color: Colors.white,
       ),
     );
   }

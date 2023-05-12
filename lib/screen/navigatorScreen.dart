@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hiro_app/pages/home.dart';
 
 class NavigatorHome extends StatefulWidget {
   const NavigatorHome({super.key});
@@ -40,7 +41,7 @@ class _NavigatorHomeState extends State<NavigatorHome> {
         Container(
           color: Colors.red,
           alignment: Alignment.center,
-          child: const Text('Page 1'),
+          child: const Home(),
         ),
         Container(
           color: Colors.green,

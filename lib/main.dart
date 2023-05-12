@@ -33,9 +33,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: '/',
+      theme: ThemeData.light(),
       routes: {
         '/': (context) => const OnboardingPage(),
         '/login': (context) => const LoginPage(),
+        '/loginpin': (context) => const InputPinPage(),
         '/home': (context) => const NavigatorHome(),
         '/location': (context) => const ChooseLocation(),
       },

@@ -16,7 +16,7 @@ class FormValidate {
   }
 
   static String? validatePhone(String? value) {
-    const pattern = r'^8\d{8,11}$';
+    const pattern = r'^08[1-9]{1}\d{1}\d{5,11}$';
     final regex = RegExp(pattern);
     if (value!.isEmpty) {
       return 'Enter a phone number';

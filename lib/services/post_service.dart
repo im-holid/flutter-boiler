@@ -13,8 +13,8 @@ class PostServices {
     required String urlPath,
     Map<String, String>? query,
     Map<String, dynamic>? body,
-    File? file,
     Map<String, String>? header,
+    bool isAuth = false,
   }) async {
     Client client = Client();
     final String baseUrl = FlutterConfig.get('API_URL') + '/' + FlutterConfig.get('API_VERSION');
@@ -24,16 +24,15 @@ class PostServices {
       url.replace(queryParameters: query);
     }
     String token = '';
-
-    // TODO:
-    // do not read directly from local storage, move to state management
-    String authToken = await Store.read(StoreConstans.authToken);
-    if (authToken != '') {
-      token = authToken;
+    if (isAuth) {
+      dynamic authToken = await Store.read(StoreConstans.authToken);
+      if (authToken != '') {
+        token = authToken['token'];
+      }
     }
-    String loginToken = await Store.read(StoreConstans.loginToken);
-    if (loginToken != '') {
-      token = loginToken;
+    dynamic loginToken = await Store.read(StoreConstans.loginToken);
+    if (loginToken != '' && !isAuth) {
+      token = loginToken['token'];
     }
 
     Map<String, String> requestHeader = {
@@ -60,8 +59,6 @@ class PostServices {
     }
     String token = '';
 
-    // TODO:
-    // do not read directly from local storage, move to state management
     String authToken = await Store.read(StoreConstans.authToken);
     if (authToken != '') {
       token = authToken;
@@ -97,7 +94,6 @@ class PostServices {
       );
     }
 
-    print(request.fields);
     // Convert StreamedResponse to Response
     StreamedResponse streamedResponse = await request.send();
     String responseBody = await streamedResponse.stream.transform(utf8.decoder).join();

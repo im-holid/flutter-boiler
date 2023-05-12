@@ -2,14 +2,12 @@ import 'package:intl/intl.dart';
 
 class Format {
   static String? number(int value, [int decimal = 0]) {
-    final number = NumberFormat.decimalPercentPattern(
-        locale: null, decimalDigits: decimal);
+    final number = NumberFormat.decimalPercentPattern(locale: null, decimalDigits: decimal);
     return number.format(value);
   }
 
   static String? currency(int value, [String symbol = '', int decimal = 0]) {
-    final number = NumberFormat.currency(
-        locale: null, decimalDigits: decimal, symbol: symbol);
+    final number = NumberFormat.currency(locale: null, decimalDigits: decimal, symbol: symbol);
     return number.format(value);
   }
 
